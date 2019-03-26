@@ -1,15 +1,25 @@
 import unittest
-from corsair.cisco.prime.api import Api
+import os
+from corsair.cisco.prime import Api
+
+
+CREDENTIALS = {
+    'url': '',
+    'user': '',
+    'pass': ''
+}
 
 
 class TestRequest(unittest.TestCase):
     def test_api(self):
-        url = 'https://prime.cemig.ad.corp/webacs/api/v4'
-        user = ''
-        password = ''
+        url = CREDENTIALS['url']
+        user = CREDENTIALS['user']
+        password = CREDENTIALS['pass']
         api = Api(url, user, password)
-        responses = api.devices.all(full='true')
-        self.assertIsInstance(api, Api)
+        devices = api.data_devices.all()
+        aps = api.data_access_points.all(full='true')
+        self.assertIsInstance(devices, list)
+        self.assertIsInstance(aps, list)
 
 
 if __name__ == '__main__':

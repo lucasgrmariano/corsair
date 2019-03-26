@@ -1,5 +1,5 @@
 # corsair
-Python wrapper for some NSOC tools.
+Python wrapper for some NSOC tools.  Corsair aims to implement RESTful wrappers for different tools commonly used by Network and Security Operations Centers (NSOC).
 
 
 ## Tests
