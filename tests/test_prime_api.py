@@ -15,9 +15,9 @@ class TestRequest(unittest.TestCase):
         url = CREDENTIALS['url']
         user = CREDENTIALS['user']
         password = CREDENTIALS['pass']
-        api = Api(url, user, password)
-        devices = api.data_devices.all()
-        aps = api.data_access_points.all(full='true')
+        prime = Api(url, user, password)
+        devices = prime.devices.all()
+        aps = prime.access_points.all(full='true')
         self.assertIsInstance(devices, list)
         self.assertIsInstance(aps, list)
 

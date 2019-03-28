@@ -1,6 +1,4 @@
-# Corsair
-
-## Cisco Prime
+# Corsair > Cisco > Prime
 This is the [Cisco Prime](https://www.cisco.com/c/en/us/products/cloud-systems-management/prime-infrastructure/index.html) API wrapper.  Fortunately, Prime API is well documented, usually accessible at `https://PRIME_ADDR/webacs/api/VERSION`.
 
 To start using this wrapper, you must create a user in Prime with NBI permissions, according to the resources you need to access.  Read `?id=authentication-doc` under Prime's own documentation to learn more about such privileges.
