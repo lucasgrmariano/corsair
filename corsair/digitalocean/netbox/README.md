@@ -19,5 +19,6 @@ At least you'll need the following data to start:
 ```python
 >>> from corsair.digitalocean.netbox import Api
 >>> netbox = Api('https://netbox_addr/api', 'aR3allyl000ngtok3n')
->>> netbox.ip_addresses.all()
+>>> netbox.ip_addresses.find(address='10.11.12.13')
+>>> netbox.ip_addresses.filter()
 ```
