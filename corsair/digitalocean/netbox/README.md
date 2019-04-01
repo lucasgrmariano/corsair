@@ -19,6 +19,10 @@ At least you'll need the following data to start:
 ```python
 >>> from corsair.digitalocean.netbox import Api
 >>> netbox = Api('https://netbox_addr/api', 'aR3allyl000ngtok3n')
->>> netbox.ip_addresses.find(address='10.11.12.13')
->>> netbox.ip_addresses.filter()
+>>> netbox.ip_addresses.create(address='10.11.12.13', description='Foobar')
+>>> ip = netbox.ip_addresses.find(address='10.11.12.13')
+>>> netbox.ip_addresses.update(id=ip['id'], description='Desktop')
+>>> netbox.ip_addresses.find(address='10.11.12.13')['description']
+>>> netbox.ip_addresses.delete(ip['id'])
+>>> all_addrs = netbox.ip_addresses.filter()
 ```
