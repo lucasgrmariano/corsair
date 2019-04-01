@@ -3,6 +3,8 @@ import urllib.request
 from json import loads, dumps
 from json.decoder import JSONDecodeError
 
+from corsair import CorsairError
+
 
 class Api(object):
     def __init__(self, base_url, token):
@@ -21,40 +23,54 @@ class Endpoint(object):
     def create(self, **kwargs):
         'Create a new element'
         res = self.request.post(**kwargs)
-        return res.status
+        if res.status == 201:
+            return res
+        else:
+            raise CorsairError(f'Error creating element: {kwargs}')
     
     def find(self, **kwargs):
         'Retrieves only one element identified by key in kwargs.'
-        res = self.request.get(**kwargs)  #TODO check results
+        res = self.request.get(**kwargs)
         try:
-            return loads(res.read())['results'][0]
-        except JSONDecodeError:
-            return None
+            ret = loads(res.read())['results']
+            assert len(ret) == 1
+            return ret[0]
+        except (JSONDecodeError, IndexError, AssertionError):
+            raise CorsairError(f'Element not found: {kwargs}')
     
     def filter(self, **kwargs):
         'Retrieves multiple elements identified by key in kwargs - without args works like all'
         offset, limit = (0, 1000)
         kwargs.update({'offset':offset,'limit':limit})
-        res = self.request.get(**kwargs)  #TODO check results
+        res = self.request.get(**kwargs)
         json = loads(res.read())
         elements = json['results']
         while json['next']:
             offset += limit
             kwargs.update({'offset':offset})
-            res = self.request.get(**kwargs)  #TODO check results
+            res = self.request.get(**kwargs)
             json = loads(res.read())
             elements.extend(json['results'])
-        return elements
+        if elements:
+            return elements
+        else:
+            raise CorsairError(f'Not found: {kwargs}')
     
     def update(self, **kwargs):
         'Set the properties of a given element'
         res = self.request.patch(**kwargs)
-        return res.status
+        if res.status == 200:
+            return res
+        else:
+            raise CorsairError(f'Error updating: {kwargs}')
         
     def delete(self, id):
         'Deletes a given element'
         res = self.request.delete(id)
-        return res.status
+        if res.status == 204:
+            return res
+        else:
+            raise CorsairError(f'Error deleting: {kwargs}')
 
 
 class Request(object):

@@ -14,8 +14,22 @@ class TestRequest(unittest.TestCase):
         url = CREDENTIALS['url']
         token = CREDENTIALS['token']
         netbox = Api(url, token)
-        ip_addresses = netbox.ip_addresses.all()
-        self.assertIsInstance(ip_addresses, list)
+        test_addr = '255.255.255.255'
+
+        netbox.ip_addresses.create(address=test_addr, description='Foobar')
+        ip = netbox.ip_addresses.find(address=test_addr)
+        self.assertIsInstance(ip, dict)
+
+        netbox.ip_addresses.update(id=ip['id'], description='Desktop')
+        desc = netbox.ip_addresses.find(address=test_addr)['description']
+        self.assertEqual(desc, 'Desktop')
+
+        netbox.ip_addresses.delete(ip['id'])
+        ip = netbox.ip_addresses.find(address=test_addr)
+        self.assertIsNone(ip, 'Desktop')
+
+        ips = netbox.ip_addresses.filter()
+        self.assertIsInstance(ips, list)
 
 
 if __name__ == '__main__':
