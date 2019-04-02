@@ -8,7 +8,7 @@ Compatibility:
 * Prime 3.4
 * API v4
 
-Actually, it works internally with JSON responses, so, if you need to receive XML responses, this code must be modified.
+Actually, it works internally with JSON responses, so, if you need to receive XML responses, this code must be modified.  This version only supports `/data` endpoint, so any `/op/` resources will not work, for instance.
 
 
 ### Basic Usage
@@ -20,6 +20,6 @@ At least you'll need the following data to start:
 ```python
 >>> from corsair.cisco.prime import Api
 >>> prime = Api('https://prime_addr/webacs/api/v4/', 'cors', 'Strong_P4$$w0rd!')
->>> prime.devices.all()
->>> prime.devices.all(full='true')
+>>> prime.devices.filter()
+>>> prime.devices.filter(full='true')
 ```

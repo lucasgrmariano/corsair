@@ -7,8 +7,6 @@ Compatibility:
 
 * NetBox 2.4
 
-Actually, it works internally with JSON responses, so, if you need to receive XML responses, this code must be modified.
-
 
 ### Basic Usage
 At least you'll need the following data to start:
