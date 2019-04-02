@@ -17,22 +17,42 @@ class Endpoint(object):
     def __init__(self, api, endpoint):
         self.base_url = f'{api.base_url}/{endpoint}'
         self.auth = api.auth
+        self.request = Request(self.base_url, self.auth)
     
-    def all(self, **kwargs):
-        kwargs['firstResult'] = 0
-        kwargs['maxResults'] = 1000
-        responses = [Request(self.base_url, self.auth).get(**kwargs)]
-        while (responses[0]['queryResponse']['@last'] + 1) < responses[0]['queryResponse']['@count']:
-            kwargs['firstResult'] = responses[0]['queryResponse']['@last'] + 1
-            responses.insert(0, Request(self.base_url, self.auth).get(**kwargs))
-        return responses
+    def filter(self, **kwargs):
+        first_result, max_results = (0, 1000)
+        kwargs.update({'firstResult':first_result,'maxResults':max_results})
+        res = self.request.get(**kwargs)
+        json = loads(res.read())['queryResponse']
+        try:  # Prime has different returns if '.full=true'
+            elements = json['entity']
+        except KeyError:
+            elements = json['entityId']
+        while (json['@last'] + 1) < json['@count']:
+            kwargs.update({'firstResult':json['@last'] + 1})
+            res = self.request.get(**kwargs)
+            json = loads(res.read())
+            try:  # Prime has different returns if '.full=true'
+                elements.extend(json['entity'])
+            except KeyError:
+                elements.extend(json['entityId'])
+        return elements
 
 
 class Request(object):
     def __init__(self, base_url, auth):
         self.base_url = base_url
         self.auth = auth
+        self.headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Basic {self.auth}'
+        }
 
+    def get(self, **kwargs):
+        url = self.make_url(self.base_url, **kwargs)
+        req = urllib.request.Request(url, headers=self.headers, method='GET')
+        return urllib.request.urlopen(req) 
+    
     def make_url(self, base, **kwargs):
         'Converts kwargs into Prime filters'
         if kwargs:
@@ -42,10 +62,3 @@ class Request(object):
             return f'{base}?{f}'
         else:
             return base
-
-    def get(self, **kwargs):
-        url = self.make_url(self.base_url, **kwargs)
-        req = urllib.request.Request(url, 
-            headers={'Authorization':f'Basic {self.auth}'}, method='GET')
-        with urllib.request.urlopen(req) as r:
-            return loads(r.read())

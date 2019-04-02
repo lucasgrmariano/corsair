@@ -11,7 +11,43 @@ class Api(object):
         self.base_url = base_url if base_url[-1] != '/' else base_url[:-1]
         self.auth = token
 
+        self.circuit_terminations = Endpoint(self, 'circuits/circuit-terminations')
+        self.circuit_types = Endpoint(self, 'circuits/circuit-types')
+        self.circuits = Endpoint(self, 'circuits/circuits')
+        self.providers = Endpoint(self, 'circuits/providers')
+
+        self.connected_device = Endpoint(self, 'dcim/connected-device')
+        self.console_connections = Endpoint(self, 'dcim/console-connections')
+        #TODO Add the rest of DCIM endpoints.
+        #WARNING Remember to check if property already exists before adding!
+
+        self.config_contexts = Endpoint(self, 'extras/config-contexts')
+        self.export_templates = Endpoint(self, 'extras/export-templates')
+        self.graphs = Endpoint(self, 'extras/graphs')
+        self.image_attachments = Endpoint(self, 'extras/image-attachments')
+        self.object_changes = Endpoint(self, 'extras/object-changes')
+        self.recent_activity = Endpoint(self, 'extras/recent-activity')
+        self.tags = Endpoint(self, 'extras/tags')
+        self.topology_maps = Endpoint(self, 'extras/topology-maps')
+
+        self.aggregates = Endpoint(self, 'ipam/aggregates')
         self.ip_addresses = Endpoint(self, 'ipam/ip-addresses')
+        self.prefixes = Endpoint(self, 'ipam/prefixes')
+        self.rirs = Endpoint(self, 'ipam/rirs')
+        self.roles = Endpoint(self, 'ipam/roles')
+        self.services = Endpoint(self, 'ipam/services')
+        self.vlan_groups = Endpoint(self, 'ipam/vlan-groups')
+        self.vlans = Endpoint(self, 'ipam/vlans')
+        self.vrfs = Endpoint(self, 'ipam/vrfs')
+        
+        self.tenant_groups = Endpoint(self, 'tenancy/tenant-groups')
+        self.tenants = Endpoint(self, 'tenancy/tenants')
+
+        self.cluster_groups = Endpoint(self, 'virtualization/cluster-groups')
+        self.cluster_types = Endpoint(self, 'virtualization/cluster-types')
+        self.clusters = Endpoint(self, 'virtualization/clusters')
+        self.interfaces = Endpoint(self, 'virtualization/interfaces')
+        self.virtual_machines = Endpoint(self, 'virtualization/virtual-machines')
 
 
 class Endpoint(object):
