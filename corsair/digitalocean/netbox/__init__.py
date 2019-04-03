@@ -140,10 +140,10 @@ class Request(object):
             method='DELETE')
         return urllib.request.urlopen(req)
 
-    def make_url(self, base, **kwargs):
+    def make_url(self, url_base, **kwargs):
         'Converts kwargs into NetBox filters'
         if kwargs:
             f = '&'.join([f'{k}={v}' for k,v in kwargs.items()])
-            return f'{base}?{f}'
+            return f'{url_base}?{f}'
         else:
-            return base
+            return url_base

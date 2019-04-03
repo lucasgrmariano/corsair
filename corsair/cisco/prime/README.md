@@ -11,7 +11,7 @@ Compatibility:
 Actually, it works internally with JSON responses, so, if you need to receive XML responses, this code must be modified.  This version only supports `/data` endpoint, so any `/op/` resources will not work, for instance.
 
 
-### Basic Usage
+## Basic Usage
 At least you'll need the following data to start:
 
 * Prime URL in this format: `https://PRIME_ADDR/webacs/api/VERSION`

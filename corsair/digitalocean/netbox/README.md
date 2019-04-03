@@ -8,7 +8,7 @@ Compatibility:
 * NetBox 2.4
 
 
-### Basic Usage
+## Basic Usage
 At least you'll need the following data to start:
 
 * NetBox URL in this format: `https://NETBOX_ADDR/api/`

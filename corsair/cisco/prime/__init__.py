@@ -110,12 +110,12 @@ class Request(object):
         req = urllib.request.Request(url, headers=self.headers, method='GET')
         return urllib.request.urlopen(req) 
     
-    def make_url(self, base, **kwargs):
+    def make_url(self, url_base, **kwargs):
         'Converts kwargs into Prime filters'
         if kwargs:
             # Prime filters start with a dot
             f = '&'.join([f'{k}={v}' for k,v in {f'.{k}':v 
                 for k,v in kwargs.items()}.items()])
-            return f'{base}?{f}'
+            return f'{url_base}?{f}'
         else:
-            return base
+            return url_base
