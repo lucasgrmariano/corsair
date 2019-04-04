@@ -1,5 +1,9 @@
 import urllib.request
+
+from urllib.parse import quote
 from json import loads
+
+from corsair import CorsairError
 
 
 class Api(object):
@@ -8,17 +12,42 @@ class Api(object):
         self.auth = token
 
         self.searches = Endpoint(self, 'ariel/searches')
+        self.offenses = Endpoint(self, 'siem/offenses')
 
 
 class Endpoint(object):
-    def __init__(self, api, endpoint):
-        self.base_url = f'{api.base_url}/{endpoint}'
+    def __init__(self, api, resource):
+        self.base_url = f'{api.base_url}/{resource}'
         self.auth = api.auth
         self.request = Request(self.base_url, self.auth)
     
+    def create(self, **kwargs):
+        res = self.request.post(**kwargs)
+        if res.status == 201:
+            return loads(res.read())
+        else:
+            CorsairError('Could not create requisition')
+    
+    def fetch(self, id, **kwargs):
+        'Gets a single element'
+        req = Request(self.base_url, self.auth)
+        req.base_url += '' if not id else f'/{id}'
+        if kwargs.get('results'):
+            req.base_url += '/results'
+            kwargs.pop('results')
+        res = req.get(**kwargs)
+        if res.status == 200:
+            return loads(res.read())
+        else:
+            raise CorsairError('Not found')
+    
     def filter(self, **kwargs):
-        req = self.request.get(**kwargs)
-        return loads(req.read())
+        'Gets all elements from a resource'
+        res = self.request.get(**kwargs)
+        if res.status == 200:
+            return loads(res.read())
+        else:
+            raise CorsairError('Not found')
 
 
 class Request(object):
@@ -31,14 +60,18 @@ class Request(object):
         }
     
     def get(self, **kwargs):
-        url = self.make_url(self.base_url, **kwargs)
+        url = self.parse_url_filters(self.base_url, **kwargs)
         req = urllib.request.Request(url, headers=self.headers, method='GET')
         return urllib.request.urlopen(req)
     
-    def make_url(self, url_base, **kwargs):
-        'Converts kwargs into QRadar filters'
+    def post(self, **kwargs):
+        url = self.parse_url_filters(self.base_url, **kwargs)
+        req = urllib.request.Request(url, headers=self.headers, method='POST')
+        return urllib.request.urlopen(req)
+    
+    def parse_url_filters(self, url_base, **kwargs):
         if kwargs:
-            f = '&'.join([f'{k}={v}' for k,v in kwargs.items()])
+            f = '&'.join([f'{k}={quote(v)}' for k,v in kwargs.items()])
             return f'{url_base}?{f}'
         else:
             return url_base
