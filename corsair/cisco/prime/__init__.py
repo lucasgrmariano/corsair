@@ -71,8 +71,8 @@ class Api(object):
 
 
 class Endpoint(object):
-    def __init__(self, api, endpoint):
-        self.base_url = f'{api.base_url}/{endpoint}'
+    def __init__(self, api, resource):
+        self.base_url = f'{api.base_url}/{resource}'
         self.auth = api.auth
         self.request = Request(self.base_url, self.auth)
     
@@ -106,12 +106,11 @@ class Request(object):
         }
 
     def get(self, **kwargs):
-        url = self.make_url(self.base_url, **kwargs)
+        url = self.parse_url_filters(self.base_url, **kwargs)
         req = urllib.request.Request(url, headers=self.headers, method='GET')
         return urllib.request.urlopen(req) 
     
-    def make_url(self, url_base, **kwargs):
-        'Converts kwargs into Prime filters'
+    def parse_url_filters(self, url_base, **kwargs):
         if kwargs:
             # Prime filters start with a dot
             f = '&'.join([f'{k}={v}' for k,v in {f'.{k}':v 

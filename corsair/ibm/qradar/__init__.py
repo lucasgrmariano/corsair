@@ -2,6 +2,7 @@ import urllib.request
 
 from urllib.parse import quote
 from json import loads
+from copy import copy
 
 from corsair import CorsairError
 
@@ -13,6 +14,11 @@ class Api(object):
 
         self.searches = Endpoint(self, 'ariel/searches')
         self.offenses = Endpoint(self, 'siem/offenses')
+        
+        self.dig_lookups = Endpoint(self, 'services/dig_lookups')
+        self.dns_lookups = Endpoint(self, 'services/dns_lookups')
+        self.port_scans = Endpoint(self, 'services/port_scans')
+        self.whois_lookups = Endpoint(self, 'services/whois_lookups')
 
 
 class Endpoint(object):
@@ -30,7 +36,7 @@ class Endpoint(object):
     
     def fetch(self, id, **kwargs):
         'Gets a single element'
-        req = Request(self.base_url, self.auth)
+        req = copy(self.request)
         req.base_url += '' if not id else f'/{id}'
         if kwargs.get('results'):
             req.base_url += '/results'
@@ -66,6 +72,7 @@ class Request(object):
     
     def post(self, **kwargs):
         url = self.parse_url_filters(self.base_url, **kwargs)
+        print(url)
         req = urllib.request.Request(url, headers=self.headers, method='POST')
         return urllib.request.urlopen(req)
     

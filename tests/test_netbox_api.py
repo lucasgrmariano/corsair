@@ -1,6 +1,7 @@
 import unittest
 import os
 from corsair.digitalocean.netbox import Api
+from corsair import CorsairError
 
 
 CREDENTIALS = {
@@ -17,19 +18,21 @@ class TestRequest(unittest.TestCase):
         test_addr = '255.255.255.255'
 
         netbox.ip_addresses.create(address=test_addr, description='Foobar')
-        ip = netbox.ip_addresses.find(address=test_addr)
-        self.assertIsInstance(ip, dict)
+        ip1 = netbox.ip_addresses.filter(address=test_addr)[0]
+        self.assertIsInstance(ip1, dict)
 
-        netbox.ip_addresses.update(id=ip['id'], description='Desktop')
-        desc = netbox.ip_addresses.find(address=test_addr)['description']
-        self.assertEqual(desc, 'Desktop')
+        ip2 = netbox.ip_addresses.update(ip1['id'], description='Desktop')
+        self.assertEqual(ip2['description'], 'Desktop')
 
-        netbox.ip_addresses.delete(ip['id'])
-        ip = netbox.ip_addresses.find(address=test_addr)
-        self.assertIsNone(ip, 'Desktop')
+        netbox.ip_addresses.delete(ip1['id'])
+        try:
+            ip2 = netbox.ip_addresses.fetch(ip1['id'])
+        except CorsairError:
+            ip2 = None
+        self.assertIsNone(ip2)
 
-        ips = netbox.ip_addresses.filter()
-        self.assertIsInstance(ips, list)
+        prefixes = netbox.prefixes.filter()
+        self.assertIsInstance(prefixes, list)
 
 
 if __name__ == '__main__':

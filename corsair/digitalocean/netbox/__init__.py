@@ -1,7 +1,7 @@
 import urllib.request
 
 from json import loads, dumps
-from json.decoder import JSONDecodeError
+from copy import copy
 
 from corsair import CorsairError
 
@@ -51,8 +51,8 @@ class Api(object):
 
 
 class Endpoint(object):
-    def __init__(self, api, endpoint):
-        self.base_url = f'{api.base_url}/{endpoint}'
+    def __init__(self, api, resource):
+        self.base_url = f'{api.base_url}/{resource}'
         self.auth = api.auth
         self.request = Request(self.base_url, self.auth)
 
@@ -60,22 +60,22 @@ class Endpoint(object):
         'Create a new element'
         res = self.request.post(**kwargs)
         if res.status == 201:
-            return res
+            return loads(res.read())
         else:
             raise CorsairError(f'Error creating element: {kwargs}')
     
-    def find(self, **kwargs):
-        'Retrieves only one element identified by key in kwargs.'
-        res = self.request.get(**kwargs)
+    def fetch(self, id, **kwargs):
+        'Retrieves only one element'
+        req = copy(self.request)
+        req.base_url += f'/{id}/'
         try:
-            ret = loads(res.read())['results']
-            assert len(ret) == 1
-            return ret[0]
-        except (JSONDecodeError, IndexError, AssertionError):
-            raise CorsairError(f'Element not found: {kwargs}')
+            res = req.get(**kwargs)
+        except urllib.error.HTTPError as e:
+            raise CorsairError(f'Unable to access {req.base_url}: {e}')
+        return loads(res.read())
     
     def filter(self, **kwargs):
-        'Retrieves multiple elements identified by key in kwargs - without args works like all'
+        'Gets multiple elements filtered by kwargs - blank to show all'
         offset, limit = (0, 1000)
         kwargs.update({'offset':offset,'limit':limit})
         res = self.request.get(**kwargs)
@@ -92,19 +92,19 @@ class Endpoint(object):
         else:
             raise CorsairError(f'Not found: {kwargs}')
     
-    def update(self, **kwargs):
+    def update(self, id, **kwargs):
         'Set the properties of a given element'
-        res = self.request.patch(**kwargs)
+        res = self.request.patch(id, **kwargs)
         if res.status == 200:
-            return res
+            return loads(res.read())
         else:
-            raise CorsairError(f'Error updating: {kwargs}')
+            raise CorsairError(f'Error updating: {id}')
         
     def delete(self, id):
         'Deletes a given element'
         res = self.request.delete(id)
         if res.status == 204:
-            return res
+            return res.status
         else:
             raise CorsairError(f'Error deleting: {kwargs}')
 
@@ -118,12 +118,12 @@ class Request(object):
         }
     
     def get(self, **kwargs):
-        url = self.make_url(self.base_url, **kwargs)
+        url = self.parse_url_filters(self.base_url, **kwargs)
         req = urllib.request.Request(url, headers=self.headers, method='GET')
         return urllib.request.urlopen(req)
     
-    def patch(self, **kwargs):
-        url = f'{self.base_url}/{kwargs["id"]}/'
+    def patch(self, id, **kwargs):
+        url = f'{self.base_url}/{id}/'
         req = urllib.request.Request(url, headers=self.headers, 
             data=dumps(kwargs).encode('utf-8'), method='PATCH')
         return urllib.request.urlopen(req)
@@ -140,8 +140,7 @@ class Request(object):
             method='DELETE')
         return urllib.request.urlopen(req)
 
-    def make_url(self, url_base, **kwargs):
-        'Converts kwargs into NetBox filters'
+    def parse_url_filters(self, url_base, **kwargs):
         if kwargs:
             f = '&'.join([f'{k}={v}' for k,v in kwargs.items()])
             return f'{url_base}?{f}'
