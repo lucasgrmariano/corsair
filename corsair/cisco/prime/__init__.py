@@ -76,7 +76,7 @@ class Endpoint(object):
         self.auth = api.auth
         self.request = Request(self.base_url, self.auth)
     
-    def filter(self, **kwargs):
+    def read(self, **kwargs):
         first_result, max_results = (0, 1000)
         kwargs.update({'firstResult':first_result,'maxResults':max_results})
         res = self.request.get(**kwargs)

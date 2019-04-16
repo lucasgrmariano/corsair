@@ -16,7 +16,7 @@ Actually, it works internally with JSON responses, so, if you need to receive XM
 
 ```python
 >>> from corsair.cisco.prime import Api
->>> prime = Api('https://prime_addr/webacs/api/v4/', 'cors', 'Strong_P4$$w0rd!')
->>> prime.devices.filter()
->>> prime.devices.filter(full='true')
+>>> prime = Api('https://prime.corp/webacs/api/v4', 'cors', 'Strong_P4$$w0rd!')
+>>> prime.devices.read()
+>>> prime.devices.read(full='true')
 ```

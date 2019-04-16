@@ -7,6 +7,15 @@ The main idea behind Corsair is to provide a method to access different APIs to 
 * `Endpoint`: uses endpoints to connect to certain API resources, by using [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) methods.
 * `Request`: execute actions in a given API endpoint or resource, using [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods).
 
+Each `Api` class has particular properties according to the API it's representing.  The `Endpoint` class implements the CRUD methods themselves, usually:
+
+* `create` to insert new items,
+* `read` to get as many results as possible and `fetch` (to get only one result),
+* `update` to alter certain items, and
+* `delete` to erase items.
+
+The `Request` class implements methods to interact with the server using HTTP, by handling URLs (filter parameters), headers (like `Content-Type` and `Authorization`), and methods (like `GET`, `PUT`, `PATCH`, and `DELETE`).  As all examples accross this repository present, the user will only have to connect to certain API using `Api` classes and understand what endpoints are available in `Endpoint` class.  This should be enough to make all interactions.
+
 It's a project decision to return almost "raw" data from API, so the consumer must treat this data.  This is done because at this point of the project, it'll take a lot of time to understand all resources provided by each API and organize the way they will output data.
 
 

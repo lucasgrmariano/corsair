@@ -18,7 +18,7 @@ class TestRequest(unittest.TestCase):
         test_addr = '255.255.255.255'
 
         netbox.ip_addresses.create(address=test_addr, description='Foobar')
-        ip1 = netbox.ip_addresses.filter(address=test_addr)[0]
+        ip1 = netbox.ip_addresses.read(address=test_addr)[0]
         self.assertIsInstance(ip1, dict)
 
         ip2 = netbox.ip_addresses.update(ip1['id'], description='Desktop')
@@ -31,7 +31,7 @@ class TestRequest(unittest.TestCase):
             ip2 = None
         self.assertIsNone(ip2)
 
-        prefixes = netbox.prefixes.filter()
+        prefixes = netbox.prefixes.read()
         self.assertIsInstance(prefixes, list)
 
 

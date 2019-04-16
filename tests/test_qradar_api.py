@@ -16,7 +16,7 @@ class TestRequest(unittest.TestCase):
         qradar = Api(url, token)
         query = qradar.searches.create(query_expression='select * from flows last 1 minutes')
         self.assertIsInstance(query, dict)
-        offenses = qradar.offenses.filter()
+        offenses = qradar.offenses.read()
         self.assertIsInstance(offenses, list)
 
 

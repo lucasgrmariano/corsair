@@ -33,6 +33,14 @@ class Endpoint(object):
             return loads(res.read())
         else:
             CorsairError('Could not create requisition')
+        
+    def read(self, **kwargs):
+        'Gets all elements from a resource'
+        res = self.request.get(**kwargs)
+        if res.status == 200:
+            return loads(res.read())
+        else:
+            raise CorsairError('Not found')
     
     def fetch(self, id, **kwargs):
         'Gets a single element'
@@ -42,14 +50,6 @@ class Endpoint(object):
             req.base_url += '/results'
             kwargs.pop('results')
         res = req.get(**kwargs)
-        if res.status == 200:
-            return loads(res.read())
-        else:
-            raise CorsairError('Not found')
-    
-    def filter(self, **kwargs):
-        'Gets all elements from a resource'
-        res = self.request.get(**kwargs)
         if res.status == 200:
             return loads(res.read())
         else:
@@ -72,7 +72,6 @@ class Request(object):
     
     def post(self, **kwargs):
         url = self.parse_url_filters(self.base_url, **kwargs)
-        print(url)
         req = urllib.request.Request(url, headers=self.headers, method='POST')
         return urllib.request.urlopen(req)
     

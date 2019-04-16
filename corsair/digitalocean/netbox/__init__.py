@@ -64,17 +64,7 @@ class Endpoint(object):
         else:
             raise CorsairError(f'Error creating element: {kwargs}')
     
-    def fetch(self, id, **kwargs):
-        'Retrieves only one element'
-        req = copy(self.request)
-        req.base_url += f'/{id}/'
-        try:
-            res = req.get(**kwargs)
-        except urllib.error.HTTPError as e:
-            raise CorsairError(f'Unable to access {req.base_url}: {e}')
-        return loads(res.read())
-    
-    def filter(self, **kwargs):
+    def read(self, **kwargs):
         'Gets multiple elements filtered by kwargs - blank to show all'
         offset, limit = (0, 1000)
         kwargs.update({'offset':offset,'limit':limit})
@@ -91,6 +81,16 @@ class Endpoint(object):
             return elements
         else:
             raise CorsairError(f'Not found: {kwargs}')
+    
+    def fetch(self, id, **kwargs):
+        'Retrieves only one element'
+        req = copy(self.request)
+        req.base_url += f'/{id}/'
+        try:
+            res = req.get(**kwargs)
+        except urllib.error.HTTPError as e:
+            raise CorsairError(f'Unable to access {req.base_url}: {e}')
+        return loads(res.read())
     
     def update(self, id, **kwargs):
         'Set the properties of a given element'

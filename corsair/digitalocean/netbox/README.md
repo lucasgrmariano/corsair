@@ -13,9 +13,9 @@ Prerequisites:
 >>> from corsair.digitalocean.netbox import Api
 >>> netbox = Api('https://netbox.corp/api', 'aR3allyl000ngtok3n')
 >>> netbox.ip_addresses.create(address='10.11.12.13', description='Foobar')
->>> ip = netbox.ip_addresses.filter(address='10.11.12.13')[0]
+>>> ip = netbox.ip_addresses.read(address='10.11.12.13')[0]
 >>> ip = netbox.ip_addresses.update(ip['id'], description='Desktop')
 >>> ip['description']
 >>> netbox.ip_addresses.delete(ip['id'])
->>> all_ips = netbox.ip_addresses.filter()
+>>> all_ips = netbox.ip_addresses.read()
 ```
