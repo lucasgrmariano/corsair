@@ -13,8 +13,9 @@ Prerequisites:
 ```python
 >>> from corsair.ibm.qradar import Api
 >>> qradar = Api('https://qradar.corp/api', '4-53cur3-tok3n-h3r3')
->>> qradar.searches.read()
->>> qradar.searches.fetch('search-id-goes-here', results=True)
->>> qradar.offenses.fetch(40322)
+>>> qradar.ariel.read('searches')
+>>> qradar.ariel.fetch('searches', 'search-id-goes-here', results=True)
+>>> qradar.siem.fetch('offenses', 40322)
 >>> qradar.searches.create(query_expression='select * from flows last 5 minutes')
+>>> qradar.system.read('servers')
 ```

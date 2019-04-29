@@ -18,6 +18,18 @@ The `Request` class implements methods to interact with the server using HTTP, b
 
 It's a project decision to return almost "raw" data from API, so the consumer must treat this data.  This is done because at this point of the project, it'll take a lot of time to understand all resources provided by each API and organize the way they will output data.
 
+This is the URL template Corsair tries to implement:
+
+```
+https://app.corp/api/endpoint/resource?filter=f1&filter2=2
+\__________________/\_______/\_______/\__________________/
+     Base URL       Endpoint  Resource      Filters
+\___________________________/\___________________________/
+    Corsair will implement     Corsair will facilitate,
+                               but programmer must
+                               implement.
+```
+
 
 ## Tests
 Run tests with:

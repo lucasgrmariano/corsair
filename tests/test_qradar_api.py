@@ -14,9 +14,9 @@ class TestRequest(unittest.TestCase):
         url = CREDENTIALS['url']
         token = CREDENTIALS['token']
         qradar = Api(url, token)
-        query = qradar.searches.create(query_expression='select * from flows last 1 minutes')
+        query = qradar.ariel.create('searches', query_expression='select * from flows last 1 minutes')
         self.assertIsInstance(query, dict)
-        offenses = qradar.offenses.read()
+        offenses = qradar.siem.read('offenses')
         self.assertIsInstance(offenses, list)
 
 
