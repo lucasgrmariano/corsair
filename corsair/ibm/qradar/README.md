@@ -12,7 +12,7 @@ An example on how QRadar structures URLs and how it's mapped in Corsair follows:
 ```
 https://qradar.corp/api/ariel/searches/22d21cc3-7ea9-4bad-96f8-a652e21b7743/results
 \_____________________/\____/\____________________________________________/\______/
-  Base URL            Endpoint                  Resource                    Suffix
+      Base URL        Endpoint                  Resource                    Suffix
 ```
 
 

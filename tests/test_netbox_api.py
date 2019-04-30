@@ -17,21 +17,14 @@ class TestRequest(unittest.TestCase):
         netbox = Api(url, token)
         test_addr = '255.255.255.255'
 
-        netbox.ip_addresses.create(address=test_addr, description='Foobar')
-        ip1 = netbox.ip_addresses.read(address=test_addr)[0]
+        netbox.ipam.create('ip-addresses', address=test_addr, description='Foobar')
+        ip1 = netbox.ipam.read('ip-addresses', address=test_addr)[0]
         self.assertIsInstance(ip1, dict)
 
-        ip2 = netbox.ip_addresses.update(ip1['id'], description='Desktop')
+        ip2 = netbox.ipam.update(f'ip-addresses/{ip1["id"]}', description='Desktop')
         self.assertEqual(ip2['description'], 'Desktop')
 
-        netbox.ip_addresses.delete(ip1['id'])
-        try:
-            ip2 = netbox.ip_addresses.fetch(ip1['id'])
-        except CorsairError:
-            ip2 = None
-        self.assertIsNone(ip2)
-
-        prefixes = netbox.prefixes.read()
+        prefixes = netbox.ipam.read('prefixes')
         self.assertIsInstance(prefixes, list)
 
 
