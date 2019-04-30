@@ -21,14 +21,15 @@ It's a project decision to return almost "raw" data from API, so the consumer mu
 This is the URL template Corsair tries to implement:
 
 ```
-https://app.corp/api/endpoint/resource?filter=f1&filter2=2
-\__________________/\_______/\_______/\__________________/
-     Base URL       Endpoint  Resource      Filters
-\___________________________/\___________________________/
-    Corsair will implement     Corsair will facilitate,
-                               but programmer must
-                               implement.
+https://app.corp/api/endpoint/resource/suffix?filter=f1&filter2=2
+\__________________/\_______/\_______/\_____/\__________________/
+     Base URL       Endpoint  Resource Suffix      Filters
+\___________________________/\__________________________________/
+    Corsair will implement         Corsair will facilitate,
+                                but programmer must implement.
 ```
+
+According to common bibliography, that `suffix` field doesn't exist, but some APIs use it, like IBM/QRadar.  In that case, when the programmer wants details on certain resources, he must insert `/results` in the URL.  It exposes some issues around standardization accross multiple vendors, because some of them wisely prefer to use filters for such things, but others use the `resources` field or even HTTP headers.
 
 
 ## Tests

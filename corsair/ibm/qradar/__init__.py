@@ -2,7 +2,6 @@ import urllib.request
 
 from urllib.parse import quote
 from json import loads
-from copy import copy
 from socket import timeout
 
 from corsair import CorsairError
@@ -39,22 +38,22 @@ class Endpoint(object):
         self.resource = ''
         self.auth = credentials[1]
     
-    def create(self, resource, **kwargs):
+    def create(self, resource, **filters):
         self.resource = resource
         req = Request(self.make_url(), self.auth)
-        res = req.post(**kwargs)
+        res = req.post(**filters)
         if res.status == 201:
             return loads(res.read())
         else:
             raise CorsairError('Could not create requisition')
         
-    def read(self, resource, **kwargs):
+    def read(self, resource, **filters):
         'Gets all elements from a resource'
         self.resource = resource
         req = Request(self.make_url(), self.auth)
 
         try:
-            res = req.get(**kwargs)
+            res = req.get(**filters)
         except timeout:
             raise CorsairError('Operation timedout')
 
@@ -63,18 +62,11 @@ class Endpoint(object):
         else:
             raise CorsairError('Not found')
     
-    def fetch(self, resource, id, **kwargs):
+    def fetch(self, resource, **filters):
         'Gets a single element'
-        self.resource = f'{resource}/{id}'
+        self.resource = resource
         req = Request(self.make_url(), self.auth)
-
-        # QRadar requires a '/results' to show details of a query.
-        # The 'results=True' flag tells this wrapper to append it.
-        if kwargs.get('results'):
-            req.url += '/results'
-            kwargs.pop('results')
-        
-        res = req.get(**kwargs)
+        res = req.get(**filters)
         if res.status == 200:
             return loads(res.read())
         else:
@@ -98,18 +90,18 @@ class Request(object):
             'SEC': auth
         }
     
-    def get(self, **kwargs):
-        url = f'{self.url}?{self.parse_filters(**kwargs)}' if kwargs else self.url
+    def get(self, **filters):
+        url = f'{self.url}?{self.parse_filters(**filters)}' if filters else self.url
         req = urllib.request.Request(url, headers=self.headers, method='GET')
         return urllib.request.urlopen(req, timeout=self.timeout)
     
-    def post(self, **kwargs):
-        url = f'{self.url}?{self.parse_filters(**kwargs)}' if kwargs else self.url
+    def post(self, **filters):
+        url = f'{self.url}?{self.parse_filters(**filters)}' if filters else self.url
         req = urllib.request.Request(url, headers=self.headers, method='POST')
         return urllib.request.urlopen(req)
     
-    def parse_filters(self, **kwargs):
-        if kwargs:
-            return '&'.join([f'{k}={quote(v)}' for k,v in kwargs.items()])
+    def parse_filters(self, **filters):
+        if filters:
+            return '&'.join([f'{k}={quote(v)}' for k,v in filters.items()])
         else:
             return ''
