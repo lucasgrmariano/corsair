@@ -39,4 +39,5 @@ Run tests with:
 $ python -m unittest tests.test_prime_api
 $ python -m unittest tests.test_netbox_api
 $ python -m unittest tests.test_qradar_api
+$ python -m unittest tests.test_hibp_api
 ```

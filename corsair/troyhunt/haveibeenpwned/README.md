@@ -1,0 +1,31 @@
+# Corsair > Troy Hunt > Have I Been Pwned
+This [Have I Been Pwned](https://haveibeenpwned.com) (HIBP) API wrapper is based in `https://haveibeenpwned.com/API/v2`.
+
+Prerequisites:
+
+* API v2
+
+An example on how HIBP structures URLs and how it's mapped in Corsair follows:
+
+```
+https://haveibeenpwned.com/api/breach/500px
+\____________________________/\______/\___/
+           Base URL           Endpoint Resource
+```
+
+Its good to point that `breaches` and `breach` endpoints could be only `breaches` and if the programmer informs a singular breach, it'd return that breach.  HIBP also implements a `range` endpoint, but as it uses a completely different URL and returns data in a different format, I decided not to implement it.
+
+
+## Basic Usage
+
+```python
+>>> from corsair.troyhunt.haveibeenpwned import Api
+>>> hibp = Api('https://haveibeenpwned.com/api')
+>>>
+>>> hibp.breachedaccount.read('me@domain')
+>>> hibp.breaches.read('')
+>>> hibp.breaches.read('', domain='linkedin.com')
+>>> hibp.breach.read('500px')
+>>> hibp.dataclasses.read('')
+>>> hibp.pasteaccount.read('me@domain')
+```
