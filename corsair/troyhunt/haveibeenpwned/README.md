@@ -4,6 +4,7 @@ This [Have I Been Pwned](https://haveibeenpwned.com) (HIBP) API wrapper is based
 Prerequisites:
 
 * API v2
+* 1 request by 1.5 seconds
 
 An example on how HIBP structures URLs and how it's mapped in Corsair follows:
 
@@ -13,7 +14,7 @@ https://haveibeenpwned.com/api/breach/500px
            Base URL           Endpoint Resource
 ```
 
-Its good to point that `breaches` and `breach` endpoints could be only `breaches` and if the programmer informs a singular breach, it'd return that breach.  HIBP also implements a `range` endpoint, but as it uses a completely different URL and returns data in a different format, I decided not to implement it.
+Its good to point that `breaches` and `breach` endpoints could be concatenated into a single `breaches` endpoint, and if the programmer informed a singular breach, it'd return that breach.  HIBP also have a `range` endpoint, but as it uses a completely different URL and returns data in a different format, I decided not to implement it.
 
 
 ## Basic Usage
