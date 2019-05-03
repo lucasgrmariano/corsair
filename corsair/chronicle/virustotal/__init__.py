@@ -1,6 +1,6 @@
 import urllib.request
 
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 from json import loads
 from socket import timeout
 
@@ -31,11 +31,11 @@ class Endpoint(object):
         self.resource = _resource  # resource is a VT keyword
         req = Request(self.make_url(), self.auth)
         res = req.post(**filters)
+        return loads(res.read())
         if res.status == 201:
             return loads(res.read())
         else:
             raise CorsairError(f'Error creating element: {filters}')
-
     
     def read(self, _resource, **filters):
         self.resource = _resource  # resource is a VT keyword
@@ -46,11 +46,15 @@ class Endpoint(object):
         except timeout:
             raise CorsairError('Operation timedout')
 
+        if 'output_file' in filters:  # user requested to download a file
+            with open(filters['output_file'], 'wb') as f:
+                f.write(res.read())
+            return res.status
+
         if res.status == 200:  #TODO better error checking
             return loads(res.read())
         else:
             raise CorsairError('Not found')
-    
     
     def make_url(self):
         url = f'{self.base_url}/{self.endpoint}/{self.resource}'
@@ -77,9 +81,12 @@ class Request(object):
         return urllib.request.urlopen(req, timeout=self.timeout)
     
     def post(self, **filters):
-        data = self.parse_filters(**filters)
+        if 'apikey' not in filters:
+            filters['apikey'] = self.auth
+        if 'file' in filters:
+            self.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         req = urllib.request.Request(self.url, headers=self.headers, 
-            data=data.encode('utf-8'), method='POST')
+            data=urlencode(filters).encode('utf-8'), method='POST')
         return urllib.request.urlopen(req, timeout=self.timeout)
     
     def parse_filters(self, **filters):
