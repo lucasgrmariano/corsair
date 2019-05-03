@@ -24,6 +24,7 @@ Its good to point that `breaches` and `breach` endpoints could be concatenated i
 >>> hibp = Api('https://haveibeenpwned.com/api')
 >>>
 >>> hibp.breachedaccount.read('me@domain')
+>>> hibp.breachedaccount.read('me@domain', truncateResponse='true', includeUnverified='true')
 >>> hibp.breaches.read('')
 >>> hibp.breaches.read('', domain='linkedin.com')
 >>> hibp.breach.read('500px')
